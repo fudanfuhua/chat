@@ -22,7 +22,7 @@ ul {
     height: 100%;
     margin: 0;
     padding: 0;
-    width: 100%
+    width: 700px !important;
 }
 
 .page {
@@ -113,13 +113,12 @@ ul {
 
 .inputMessage {
     border: 2px solid #000;
-    bottom: 0;
-    height: 160px;
-    left: 0;
+    height: 200px;
     outline: 0;
     padding-left: 10px;
-    right: 0;
-    width: 100%
+    padding-bottom: 135px;
+    width: inherit;
+    word-wrap: break-word;
 }
 
 #emojiWrapper {
@@ -154,7 +153,9 @@ ul {
 }
 
 .select-btn {
-    background: #eee;
+    background: #fff;
+    border-left: 2px #000 solid;
+    border-right: 2px #000 solid;
 }
 
 .inputImage {
