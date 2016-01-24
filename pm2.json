@@ -1,0 +1,14 @@
+{
+  "apps": [{
+    "name": "websocket-socket.io",
+    "script": "production.js",
+    "cwd": "D:/wamp/wamp/www/newchat/chart-room/websocket-socket.io/www",
+    "max_memory_restart": "1G",
+    "autorestart": true,
+    "node_args": [],
+    "args": [],
+    "env": {
+      
+    }
+  }]
+}
