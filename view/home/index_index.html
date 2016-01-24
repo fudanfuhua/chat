@@ -69,8 +69,6 @@
 
   var $loginPage = $('.login.page'); // The login page
   var $chatPage = $('.chat.page'); // The chatroom page
-  // var $emoji = '';
-  // Prompt for setting a username
   var username;
   var connected = false;
   var typing = false;
@@ -129,21 +127,6 @@
       };
   });
 
-
-  // function sendImg(){
-  //   var img = $inputImg.val();
-
-  //   if (img && connected) {
-  //     $inputMessage.val('');
-  //     addChatMessage({
-  //       username: username,
-  //       message: message
-  //     });
-  //     // tell server to execute 'new message' and send along one parameter
-  //     socket.emit('chat', message);
-  //   }
-  // }
-
   //emoji
   initialEmoji();
   document.getElementById('emoji').addEventListener('click', function(e) {
@@ -163,7 +146,6 @@
           $('.inputMessage')
           .focus()
           .val($('.inputMessage').val() + '[emoji:' + target.title + ']');
-          // $emoji.concat('[emoji:' + target.title + ']');
       };
   }, false);
 
@@ -206,11 +188,8 @@
       addChatMessage({
         username: username,
         message: message
-        // emoji:  $emoji
       });
-      // tell server to execute 'new message' and send along one parameter
       socket.emit('chat', message);
-      // $emoji = '';
     }
   }
 
@@ -414,9 +393,6 @@
 
   //img
   socket.on('img', function(data) {
-        // var user = data.username;
-        // var img = data.img;
-    console.log(data);
     addChatImg(data);
   });
 
