@@ -49,7 +49,10 @@ function setUsername() {
 }
 
 //img
-$('.inputImage').on('change', function() {
+$('#file').click(function() {
+    $(".inputImage").trigger("click");
+});
+$('.inputImage').on('click', function() {
     if (this.files.length != 0) {
         var file = this.files[0],
             reader = new FileReader();
@@ -66,7 +69,6 @@ $('.inputImage').on('change', function() {
                 username: username,
                 img: e.target.result
             });
-
             // that._displayImage('me', e.target.result);
         };
         reader.readAsDataURL(file);
