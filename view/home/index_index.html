@@ -3,13 +3,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Socket.IO Chat Example</title>
+  <title>My Chat Room</title>
   <link rel="stylesheet" type="text/css" href="/static/css/index.css">
 </head>
-<body>
+<body style="position:relative;">
+  <div class="" style="position:absolute; -webkit-filter: blur(10px); width:100%;height:100%;"></div>
   <ul class="pages">
     <li class="chat page">
+      <div class="mask"></div>  
       <div class="chatArea">
+        <h3>Welcome to my chat room</h3>
         <ul class="messages"></ul>
       </div>
       <div class="select-btn">
@@ -18,18 +21,22 @@
         <img id="file" src="/static/img/file.png">
         <input class="inputImage" type="file"/>
       </div>
-      <input class="inputMessage" placeholder="Writing here..."/>
+      <textarea class="inputMessage"></textarea>
+<!--       <div style="bottom-row">
+        <button class="send-btn">发送</button>
+      </div> -->
+
     </li>
     <li class="login page">
       <div class="form">
         <h3 class="title">你的昵称是什么?</h3>
-        <input class="usernameInput" type="text" maxlength="14" />
+        <input class="usernameInput" type="text" autoFocus maxlength="14" style="color:#000;font-weight: bold;"/>
       </div>
     </li>
   </ul>
+  <script src="http://s4.qhimg.com/static/8b5050af3b8512e1/jquery.js"></script>
 
   <script src="http://s4.qhimg.com/static/535dde855bc726e2/socket.io-1.2.0.js"></script>
-  <script src="http://s4.qhimg.com/static/8b5050af3b8512e1/jquery.js"></script>
   <script src="/static/js/index.js"></script>
 </body>
 </html>

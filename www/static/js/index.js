@@ -26,9 +26,9 @@ var socket = io('http://localhost:8360');
 function addParticipantsMessage(data) {
     var message = '';
     if (data.numUsers === 1) {
-        message += "there's 1 participant";
+        message += "现在群里只有您一个人, 快去邀请好友吧";
     } else {
-        message += "there are " + data.numUsers + " participants";
+        message += "共有 " + data.numUsers + " 人加入了聊天";
     }
     log(message);
 }
@@ -52,7 +52,7 @@ function setUsername() {
 $('#file').click(function() {
     $(".inputImage").trigger("click");
 });
-$('.inputImage').on('click', function() {
+$('.inputImage').on('change', function() {
     if (this.files.length != 0) {
         var file = this.files[0],
             reader = new FileReader();
@@ -68,7 +68,7 @@ $('.inputImage').on('click', function() {
             addChatImg({
                 username: username,
                 img: e.target.result
-            });
+            },true);
             // that._displayImage('me', e.target.result);
         };
         reader.readAsDataURL(file);
@@ -129,6 +129,9 @@ function showEmoji(msg) {
 function sendMessage() {
     var message = $inputMessage.val();
     // Prevent markup from being injected into the message
+    if(!message.trim()){
+        return false;
+    }
     message = cleanInput(message);
     // if there is a non-empty message and a socket connection
     if (message && connected) {
@@ -136,7 +139,7 @@ function sendMessage() {
         addChatMessage({
             username: username,
             message: message
-        });
+        },{isMy:true});
         socket.emit('chat', message);
     }
 }
@@ -157,39 +160,76 @@ function addChatMessage(data, options) {
         $typingMessages.remove();
     }
     var msg = showEmoji(data.message);
-    var $usernameDiv = $('<span class="username" />')
-        .text(data.username)
+
+    if(options.isMy){
+        var $usernameDiv = $('<span class="username" />')
+            .text(':'+data.username)
+            .css('color', getUsernameColor(data.username));
+        var $messageBodyDiv = $('<span class="messageBody" />')
+            .html(msg);
+
+        var typingClass = data.typing ? 'typing' : '';
+        var $messageDiv = $('<li class="message mymessage"></li>')
+            .data('username', data.username)
+            .addClass(typingClass);
+
+        addMessageElement($messageDiv, options);
+    
+        $messageDiv.append($messageBodyDiv);
+
+        // $messageDiv.append($usernameDiv);
+    }else{
+        var $usernameDiv = $('<span class="username" />')
+        .text(data.username + ":")
         .css('color', getUsernameColor(data.username));
-    var $messageBodyDiv = $('<span class="messageBody" />')
-        .html(msg);
+        var $messageBodyDiv = $('<span class="messageBody" />')
+        .html(msg).css('backgroundColor',getUsernameColor(data.username));
 
-    var typingClass = data.typing ? 'typing' : '';
-    var $messageDiv = $('<li class="message"></li>')
-        .data('username', data.username)
-        .addClass(typingClass);
+        var typingClass = data.typing ? 'typing' : '';
+        var $messageDiv = $('<li class="message"></li>')
+            .data('username', data.username)
+            .addClass(typingClass);
 
-    addMessageElement($messageDiv, options);
-    $messageDiv.append($usernameDiv);
-    $messageDiv.append($messageBodyDiv);
+        addMessageElement($messageDiv, options);
+    
+        $messageDiv.append($usernameDiv);
+        $messageDiv.append($messageBodyDiv);
+    }
 }
 
 //img
-function addChatImg(data) {
+function addChatImg(data, isMy) {
     // Don't fade the message in if there is an 'X was typing'
+    if(isMy){
+        var $usernameDiv = $('<span class="username" />')
+            .text(":"+data.username)
+            .css('color', getUsernameColor(data.username));
+        var $messageBodyDiv = $('<span class="messageBody" />')
+            .append('<img src= "' + data.img + '" width="300";/>');
 
-    var $usernameDiv = $('<span class="username" />')
-        .text(data.username)
-        .css('color', getUsernameColor(data.username));
-    var $messageBodyDiv = $('<span class="messageBody" />')
-        .append('<img src= "' + data.img + '" />');
+        var typingClass = data.typing ? 'typing' : '';
+        var $messageDiv = $('<li class="message mymessage"></li>')
+            .data('username', data.username)    
+            .addClass(typingClass);
+        addMessageElement($messageDiv);
+        $messageDiv.append($messageBodyDiv);
+        // $messageDiv.append($usernameDiv);
 
-    var typingClass = data.typing ? 'typing' : '';
-    var $messageDiv = $('<li class="message"></li>')
-        .data('username', data.username)
-        .addClass(typingClass);
-    addMessageElement($messageDiv);
-    $messageDiv.append($usernameDiv);
-    $messageDiv.append($messageBodyDiv);
+    }else{
+        var $usernameDiv = $('<span class="username" />')
+            .text(data.username + ":")
+            .css('color', getUsernameColor(data.username));
+        var $messageBodyDiv = $('<span class="messageBody" />')
+            .append('<img src= "' + data.img + '" width="300";/>');
+
+        var typingClass = data.typing ? 'typing' : '';
+        var $messageDiv = $('<li class="message"></li>')
+            .data('username', data.username)    
+            .addClass(typingClass);
+        addMessageElement($messageDiv);
+        $messageDiv.append($usernameDiv);
+        $messageDiv.append($messageBodyDiv);
+    }
 }
 
 // Adds the visual chat typing message
@@ -327,7 +367,7 @@ $inputMessage.click(function() {
 socket.on('login', function(data) {
     connected = true;
     // Display the welcome message
-    var message = "Welcome to Socket.IO Chat – ";
+    var message = "";
     log(message, {
         prepend: true
     });
@@ -346,13 +386,13 @@ socket.on('img', function(data) {
 
 // Whenever the server emits 'user joined', log it in the chat body
 socket.on('userjoin', function(data) {
-    log(data.username + ' joined');
+    log(data.username + ' 加入了聊天');
     addParticipantsMessage(data);
 });
 
 // Whenever the server emits 'user left', log it in the chat body
 socket.on('userleft', function(data) {
-    log(data.username + ' left');
+    log(data.username + ' 离开了聊天');
     addParticipantsMessage(data);
     removeChatTyping(data);
 });
